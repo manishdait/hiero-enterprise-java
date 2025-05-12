@@ -14,6 +14,7 @@ public record TokenCreateRequest(@NonNull Hbar maxTransactionFee,
                                  @NonNull Duration transactionValidDuration,
                                  @NonNull String name,
                                  @NonNull String symbol,
+                                 long initialSupply,
                                  @NonNull AccountId treasuryAccountId,
                                  @NonNull PrivateKey treasuryKey,
                                  @NonNull TokenType tokenType,
@@ -35,14 +36,14 @@ public record TokenCreateRequest(@NonNull Hbar maxTransactionFee,
 
     public static TokenCreateRequest of(@NonNull final String name, @NonNull final String symbol,
             @NonNull final Account account) {
-        return of(name, symbol, account.accountId(), account.privateKey(), TokenType.FUNGIBLE_COMMON,
+        return of(name, symbol, 0, account.accountId(), account.privateKey(), TokenType.FUNGIBLE_COMMON,
                 account.privateKey());
     }
 
     public static TokenCreateRequest of(@NonNull final String name, @NonNull final String symbol,
             @NonNull TokenType tokenType,
             @NonNull final Account account) {
-        return of(name, symbol, account.accountId(), account.privateKey(), tokenType,
+        return of(name, symbol, 0, account.accountId(), account.privateKey(), tokenType,
                 account.privateKey());
     }
 
@@ -55,13 +56,20 @@ public record TokenCreateRequest(@NonNull Hbar maxTransactionFee,
             @NonNull final AccountId treasuryAccountId, @NonNull final PrivateKey treasuryKey,
             @NonNull final TokenType tokenType) {
         return new TokenCreateRequest(Hbar.from(100), TransactionRequest.DEFAULT_TRANSACTION_VALID_DURATION, name,
-                symbol, treasuryAccountId, treasuryKey, tokenType, null);
+                symbol, 0, treasuryAccountId, treasuryKey, tokenType, null);
     }
 
     public static TokenCreateRequest of(@NonNull final String name, @NonNull final String symbol,
+                                        @NonNull final AccountId treasuryAccountId, @NonNull final PrivateKey treasuryKey,
+                                        @NonNull final TokenType tokenType, @NonNull final PrivateKey supplyKey) {
+        return new TokenCreateRequest(Hbar.from(100), TransactionRequest.DEFAULT_TRANSACTION_VALID_DURATION, name,
+                symbol, 0, treasuryAccountId, treasuryKey, tokenType, supplyKey);
+    }
+
+    public static TokenCreateRequest of(@NonNull final String name, @NonNull final String symbol, final long initialSupply,
             @NonNull final AccountId treasuryAccountId, @NonNull final PrivateKey treasuryKey,
             @NonNull final TokenType tokenType, @NonNull final PrivateKey supplyKey) {
         return new TokenCreateRequest(Hbar.from(100), TransactionRequest.DEFAULT_TRANSACTION_VALID_DURATION, name,
-                symbol, treasuryAccountId, treasuryKey, tokenType, supplyKey);
+                symbol, initialSupply, treasuryAccountId, treasuryKey, tokenType, supplyKey);
     }
 }

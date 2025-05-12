@@ -13,6 +13,8 @@ import com.openelements.hiero.base.HieroException;
 import com.openelements.hiero.base.data.Account;
 import com.openelements.hiero.base.implementation.FungibleTokenClientImpl;
 import com.openelements.hiero.base.protocol.ProtocolLayerClient;
+import com.openelements.hiero.base.protocol.data.TokenCreateRequest;
+import com.openelements.hiero.base.protocol.data.TokenCreateResult;
 import com.openelements.hiero.base.protocol.data.TokenAssociateRequest;
 import com.openelements.hiero.base.protocol.data.TokenAssociateResult;
 import com.openelements.hiero.base.protocol.data.TokenDissociateRequest;
@@ -30,6 +32,7 @@ public class FungibleClientImplTest {
     Account operationalAccount;
     FungibleTokenClientImpl fungibleClientImpl;
 
+    ArgumentCaptor<TokenCreateRequest> tokenCreateCaptor = ArgumentCaptor.forClass(TokenCreateRequest.class);
     ArgumentCaptor<TokenAssociateRequest> tokenAssociateCaptor = ArgumentCaptor.forClass(TokenAssociateRequest.class);
     ArgumentCaptor<TokenDissociateRequest> tokenDissociateCaptor = ArgumentCaptor.forClass(TokenDissociateRequest.class);
 
@@ -40,6 +43,160 @@ public class FungibleClientImplTest {
         fungibleClientImpl = new FungibleTokenClientImpl(protocolLayerClient, operationalAccount);
     }
 
+    @Test
+    void testCreateToken() throws HieroException {
+        final AccountId accountId = AccountId.fromString("1.0.0");
+        final PrivateKey privateKey = PrivateKey.generateECDSA();
+        final TokenId tokenId = TokenId.fromString("1.2.3");
+        final TokenCreateResult tokenCreateResult = Mockito.mock(TokenCreateResult.class);
+
+        final String name = "Fungible Token";
+        final String symbol = "FT";
+
+        when(operationalAccount.accountId()).thenReturn(accountId);
+        when(operationalAccount.privateKey()).thenReturn(privateKey);
+        when(protocolLayerClient.executeTokenCreateTransaction(any(TokenCreateRequest.class)))
+                .thenReturn(tokenCreateResult);
+        when(tokenCreateResult.tokenId()).thenReturn(tokenId);
+
+        final TokenId result = fungibleClientImpl.createToken(name, symbol);
+
+        verify(operationalAccount, times(1)).accountId();
+        verify(operationalAccount, times(2)).privateKey(); // 1 for treasury and 1 for supply
+        verify(protocolLayerClient, times(1))
+                .executeTokenCreateTransaction(tokenCreateCaptor.capture());
+        verify(tokenCreateResult, times(1)).tokenId();
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(tokenId, result);
+
+        TokenCreateRequest createRequest = tokenCreateCaptor.getValue();
+
+        Assertions.assertEquals(accountId, createRequest.treasuryAccountId());
+        Assertions.assertEquals(privateKey, createRequest.treasuryKey());
+        Assertions.assertEquals(privateKey, createRequest.supplyKey());
+        Assertions.assertEquals(0, createRequest.initialSupply());
+        Assertions.assertEquals(name, createRequest.name());
+        Assertions.assertEquals(symbol, createRequest.symbol());
+    }
+
+    @Test
+    void testCreateTokenWithInitialSupply() throws HieroException {
+        final AccountId accountId = AccountId.fromString("1.0.0");
+        final PrivateKey privateKey = PrivateKey.generateECDSA();
+        final TokenId tokenId = TokenId.fromString("1.2.3");
+        final TokenCreateResult tokenCreateResult = Mockito.mock(TokenCreateResult.class);
+
+        final String name = "Fungible Token";
+        final String symbol = "FT";
+        final long initialSupply = 10;
+
+        when(operationalAccount.accountId()).thenReturn(accountId);
+        when(operationalAccount.privateKey()).thenReturn(privateKey);
+        when(protocolLayerClient.executeTokenCreateTransaction(any(TokenCreateRequest.class)))
+                .thenReturn(tokenCreateResult);
+        when(tokenCreateResult.tokenId()).thenReturn(tokenId);
+
+        final TokenId result = fungibleClientImpl.createToken(name, symbol, initialSupply);
+
+        verify(operationalAccount, times(1)).accountId();
+        verify(operationalAccount, times(2)).privateKey(); // 1 for treasury and 1 for supply
+        verify(protocolLayerClient, times(1))
+                .executeTokenCreateTransaction(tokenCreateCaptor.capture());
+        verify(tokenCreateResult, times(1)).tokenId();
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(tokenId, result);
+
+        TokenCreateRequest createRequest = tokenCreateCaptor.getValue();
+
+        Assertions.assertEquals(accountId, createRequest.treasuryAccountId());
+        Assertions.assertEquals(privateKey, createRequest.treasuryKey());
+        Assertions.assertEquals(privateKey, createRequest.supplyKey());
+        Assertions.assertEquals(initialSupply, createRequest.initialSupply());
+        Assertions.assertEquals(name, createRequest.name());
+        Assertions.assertEquals(symbol, createRequest.symbol());
+    }
+
+    @Test
+    void testCreateTokenWithSupplyKey() throws HieroException {
+        final AccountId accountId = AccountId.fromString("1.0.0");
+        final PrivateKey privateKey = PrivateKey.generateECDSA();
+        final TokenId tokenId = TokenId.fromString("1.2.3");
+        final TokenCreateResult tokenCreateResult = Mockito.mock(TokenCreateResult.class);
+
+        final String name = "Fungible Token";
+        final String symbol = "FT";
+        final PrivateKey supplyKey = PrivateKey.generateECDSA();
+
+        when(operationalAccount.accountId()).thenReturn(accountId);
+        when(operationalAccount.privateKey()).thenReturn(privateKey);
+        when(protocolLayerClient.executeTokenCreateTransaction(any(TokenCreateRequest.class)))
+                .thenReturn(tokenCreateResult);
+        when(tokenCreateResult.tokenId()).thenReturn(tokenId);
+
+        final TokenId result = fungibleClientImpl.createToken(name, symbol, supplyKey);
+
+        verify(operationalAccount, times(1)).accountId();
+        verify(operationalAccount, times(1)).privateKey();
+        verify(protocolLayerClient, times(1))
+                .executeTokenCreateTransaction(tokenCreateCaptor.capture());
+        verify(tokenCreateResult, times(1)).tokenId();
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(tokenId, result);
+
+        TokenCreateRequest createRequest = tokenCreateCaptor.getValue();
+
+        Assertions.assertEquals(accountId, createRequest.treasuryAccountId());
+        Assertions.assertEquals(privateKey, createRequest.treasuryKey());
+        Assertions.assertEquals(supplyKey, createRequest.supplyKey());
+        Assertions.assertEquals(0, createRequest.initialSupply());
+        Assertions.assertEquals(name, createRequest.name());
+        Assertions.assertEquals(symbol, createRequest.symbol());
+    }
+
+    @Test
+    void testCreateTokenWithAccount() throws HieroException {
+        final PrivateKey operatorKey = PrivateKey.generateECDSA();
+        final AccountId accountId = AccountId.fromString("2.0.0");
+        final PrivateKey privateKey = PrivateKey.generateECDSA();
+
+        final TokenId tokenId = TokenId.fromString("1.2.3");
+        final TokenCreateResult tokenCreateResult = Mockito.mock(TokenCreateResult.class);
+
+        final String name = "Fungible Token";
+        final String symbol = "FT";
+        final Account account = Mockito.mock(Account.class);
+
+        when(operationalAccount.privateKey()).thenReturn(operatorKey);
+        when(account.accountId()).thenReturn(accountId);
+        when(account.privateKey()).thenReturn(privateKey);
+        when(protocolLayerClient.executeTokenCreateTransaction(any(TokenCreateRequest.class)))
+                .thenReturn(tokenCreateResult);
+        when(tokenCreateResult.tokenId()).thenReturn(tokenId);
+
+        final TokenId result = fungibleClientImpl.createToken(name, symbol, account);
+
+        verify(operationalAccount, times(1)).privateKey();
+        verify(account, times(1)).accountId();
+        verify(account, times(1)).privateKey();
+        verify(protocolLayerClient, times(1))
+                .executeTokenCreateTransaction(tokenCreateCaptor.capture());
+        verify(tokenCreateResult, times(1)).tokenId();
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(tokenId, result);
+
+        TokenCreateRequest createRequest = tokenCreateCaptor.getValue();
+
+        Assertions.assertEquals(accountId, createRequest.treasuryAccountId());
+        Assertions.assertEquals(privateKey, createRequest.treasuryKey());
+        Assertions.assertEquals(operatorKey, createRequest.supplyKey());
+        Assertions.assertEquals(0, createRequest.initialSupply());
+        Assertions.assertEquals(name, createRequest.name());
+        Assertions.assertEquals(symbol, createRequest.symbol());
+    }
 
     @Test
     void testAssociateToken() throws HieroException {

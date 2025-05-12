@@ -40,21 +40,40 @@ public class FungibleTokenClientImpl implements FungibleTokenClient {
     }
 
     @Override
+    public @NonNull TokenId createToken(@NonNull String name, @NonNull String symbol, long initialSupply)
+           throws HieroException {
+        return  createToken(name, symbol, initialSupply, operationalAccount);
+    }
+
+    @Override
     public TokenId createToken(@NonNull String name, @NonNull String symbol, @NonNull PrivateKey supplyKey)
             throws HieroException {
-        return createToken(name, symbol, operationalAccount, supplyKey);
+        return createToken(name, symbol, 0, operationalAccount, supplyKey);
     }
 
     @Override
     public TokenId createToken(@NonNull String name, @NonNull String symbol, @NonNull AccountId treasuryAccountId,
             @NonNull PrivateKey treasuryKey) throws HieroException {
-        return createToken(name, symbol, treasuryAccountId, treasuryKey, operationalAccount.privateKey());
+        return createToken(name, symbol, 0, treasuryAccountId, treasuryKey, operationalAccount.privateKey());
     }
 
     @Override
-    public TokenId createToken(@NonNull String name, @NonNull String symbol, @NonNull AccountId treasuryAccountId,
+    public @NonNull TokenId createToken(@NonNull String name, @NonNull String symbol, long initialSupply,
+                    @NonNull AccountId treasuryAccountId, @NonNull PrivateKey treasuryKey) throws HieroException {
+        return createToken(name, symbol, initialSupply, treasuryAccountId, treasuryKey, operationalAccount.privateKey());
+    }
+
+    @Override
+    public @NonNull TokenId createToken(@NonNull String name, @NonNull String symbol,
+                    @NonNull AccountId treasuryAccountId, @NonNull PrivateKey treasuryKey, @NonNull PrivateKey supplyKey)
+            throws HieroException {
+        return createToken(name, symbol, 0, treasuryAccountId, treasuryKey, supplyKey);
+    }
+
+    @Override
+    public TokenId createToken(@NonNull String name, @NonNull String symbol, long initialSupply, @NonNull AccountId treasuryAccountId,
             @NonNull PrivateKey treasuryKey, @NonNull PrivateKey supplyKey) throws HieroException {
-        final TokenCreateRequest request = TokenCreateRequest.of(name, symbol, treasuryAccountId, treasuryKey,
+        final TokenCreateRequest request = TokenCreateRequest.of(name, symbol, initialSupply, treasuryAccountId, treasuryKey,
                 TokenType.FUNGIBLE_COMMON, supplyKey);
         final TokenCreateResult result = client.executeTokenCreateTransaction(request);
         return result.tokenId();

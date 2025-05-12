@@ -440,6 +440,9 @@ public class ProtocolLayerClientImpl implements ProtocolLayerClient {
                     .setTreasuryAccountId(request.treasuryAccountId())
                     .setTokenType(request.tokenType())
                     .setSupplyKey(request.supplyKey());
+            if(request.initialSupply() > 0) {
+                transaction.setInitialSupply(request.initialSupply());
+            }
             sign(transaction, request.treasuryKey(), request.supplyKey());
             final TransactionReceipt receipt = executeTransactionAndWaitOnReceipt(transaction);
             return new TokenCreateResult(receipt.transactionId, receipt.status, receipt.tokenId);

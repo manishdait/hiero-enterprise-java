@@ -846,6 +846,7 @@ public class ProtocolLayerDataCreationTests {
         final Duration transactionValidDuration = Duration.ofSeconds(120);
         final String name = "Token Name";
         final String symbol = "TKN";
+        final long initialSupply = 10;
         final AccountId treasuryAccountId = AccountId.fromString("0.0.12345");
         final PrivateKey treasuryKey = PrivateKey.generateECDSA();
         final PrivateKey supplyKey = PrivateKey.generateECDSA();
@@ -853,26 +854,26 @@ public class ProtocolLayerDataCreationTests {
 
         //Then
         Assertions.assertDoesNotThrow(
-                () -> new TokenCreateRequest(maxTransactionFee, transactionValidDuration, name, symbol,
+                () -> new TokenCreateRequest(maxTransactionFee, transactionValidDuration, name, symbol, initialSupply,
                         treasuryAccountId, treasuryKey, tokenType, supplyKey));
         Assertions.assertDoesNotThrow(() -> TokenCreateRequest.of(name, symbol, treasuryAccountId, treasuryKey));
         Assertions.assertThrows(NullPointerException.class,
-                () -> new TokenCreateRequest(null, transactionValidDuration, name, symbol, treasuryAccountId,
+                () -> new TokenCreateRequest(null, transactionValidDuration, name, symbol, initialSupply, treasuryAccountId,
                         treasuryKey, tokenType, supplyKey));
         Assertions.assertThrows(NullPointerException.class,
-                () -> new TokenCreateRequest(maxTransactionFee, null, name, symbol, treasuryAccountId, treasuryKey,
+                () -> new TokenCreateRequest(maxTransactionFee, null, name, symbol, initialSupply, treasuryAccountId, treasuryKey,
                         tokenType, supplyKey));
         Assertions.assertThrows(NullPointerException.class,
-                () -> new TokenCreateRequest(maxTransactionFee, transactionValidDuration, null, symbol,
+                () -> new TokenCreateRequest(maxTransactionFee, transactionValidDuration, null, symbol, initialSupply,
                         treasuryAccountId, treasuryKey, tokenType, supplyKey));
         Assertions.assertThrows(NullPointerException.class,
-                () -> new TokenCreateRequest(maxTransactionFee, transactionValidDuration, name, null, treasuryAccountId,
+                () -> new TokenCreateRequest(maxTransactionFee, transactionValidDuration, name, null, initialSupply, treasuryAccountId,
                         treasuryKey, tokenType, supplyKey));
         Assertions.assertThrows(NullPointerException.class,
-                () -> new TokenCreateRequest(maxTransactionFee, transactionValidDuration, name, symbol, null,
+                () -> new TokenCreateRequest(maxTransactionFee, transactionValidDuration, name, symbol, initialSupply, null,
                         treasuryKey, tokenType, supplyKey));
         Assertions.assertThrows(NullPointerException.class,
-                () -> new TokenCreateRequest(maxTransactionFee, transactionValidDuration, name, symbol,
+                () -> new TokenCreateRequest(maxTransactionFee, transactionValidDuration, name, symbol, initialSupply,
                         treasuryAccountId, treasuryKey, null, supplyKey));
     }
 

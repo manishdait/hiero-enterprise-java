@@ -32,6 +32,20 @@ public class FungibleTokenClientTest {
     }
 
     @Test
+    void createTokenWithInitialSupply() throws HieroException {
+        final String name = "TOKEN";
+        final String symbol = "FT";
+        final long initialSupply = 1;
+
+        final TokenId tokenId = tokenClient.createToken(name, symbol, initialSupply);
+        Assertions.assertNotNull(tokenId);
+
+        // to verify supply
+        final long totalSupply = tokenClient.mintToken(tokenId, 1); // should give totalSupply as initialSupply + 1;
+        Assertions.assertEquals(initialSupply + 1, totalSupply);
+    }
+
+    @Test
     void testAssociateToken() throws HieroException {
         final String name = "TOKEN";
         final String symbol = "FT";
