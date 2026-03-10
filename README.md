@@ -174,39 +174,11 @@ spring.hiero.privateKey=2130020100312346052b8104400304220420c236508c429395a8180b
 
 ### Create a release
 
-The project is using the [JReleaser](https://jreleaser.org) Maven plugin to create and publish releases.
-To use the plugin, you need to provide the following environment variables:
-
-```
-JRELEASER_GITHUB_TOKEN=your_secret_github_token
-JRELEASER_GPG_SECRET_KEY=your_secret_key
-JRELEASER_GPG_PASSPHRASE=your_secret_passphrase
-JRELEASER_GPG_PUBLIC_KEY=yout_public_key
-JRELEASER_NEXUS2_MAVEN_CENTRAL_USERNAME=your_maven_central_username
-JRELEASER_NEXUS2_MAVEN_CENTRAL_TOKEN=your_secret_maven_central_token
-```
-
-How that environment variables are defined can be found in the
-[JReleaser documentation](https://jreleaser.org/guide/latest/examples/maven/maven-central.html) and 
-[this blog post](https://foojay.io/today/how-to-release-a-java-module-with-jreleaser-to-maven-central-with-github-actions/).
-
-On a unix based system the environment variables can be defined in the `.env` file in the root of the project.
-The file is added to the `.gitignore` file and is not committed to the repository.
-
-Once that is done you can use the `release.sh` script in the root folder of the repos to create a release:
-
-```shell
-./release 0.1.0 0.2.0-SNAPSHOT
-```
-
-This will create a release on GitHub and publish the artifacts to Maven Central.
-As you can see 2 params are passed to the `release.sh` script, The first param defines the version for the release and the second param defines the version after the release.
-In the given example the project has defined version 0.1.0-SNAPSHOT before the script is executed.
-The execution will release the current code under version 0.1.0 and later switch the version to 0.2.0-SNAPSHOT and commit it.
+Currently there is no running release process and we work on setting uop everything to do releases under the hiero-ledger org.
 
 ## Documentation
 
-Technical documentation (getting started, architecture, Spring/MicroProfile, managed services, ADRs) is in the **[docs](docs/)** folder and is published as [GitHub Pages](https://hiero-ledger.github.io/hiero-enterprise-java/). Pull requests that change the docs get a preview at `…/pr/<number>/`. Set **Settings → Pages → Deploy from a branch** → branch: `gh-pages`, folder: `/ (root)`.
+Technical documentation (getting started, architecture, Spring/MicroProfile, managed services, ADRs) is in the **[docs](docs/)** folder and is published as [GitHub Pages](https://hiero-ledger.github.io/hiero-enterprise-java/). Pull requests that change the docs get a preview at `…/pr/<number>/`.
 
 ## License
 
