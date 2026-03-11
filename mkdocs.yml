@@ -7,6 +7,7 @@ site_url: https://hiero-ledger.github.io/hiero-enterprise-java/
 
 theme:
   name: material
+  favicon: assets/favicon.ico
   logo: assets/logo.svg
   palette:
     - scheme: default
