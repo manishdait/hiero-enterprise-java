@@ -1,13 +1,6 @@
 /* Navbar/header primary color */
-:root {
-  --md-primary-fg-color: #b91b56;
+[data-md-color-primary="hiero"] {
+  --md-primary-fg-color:        #b91b56;
   --md-primary-fg-color--light: #b91b56;
-  --md-primary-fg-color--dark: #8f1543;
-}
-
-
-[data-md-color-scheme="slate"] {
-  --md-primary-fg-color: #b91b56;
-  --md-primary-fg-color--light: #b91b564;
-  --md-primary-fg-color--dark: #8f1543;
+  --md-primary-fg-color--dark:  #b91b56;
 }
