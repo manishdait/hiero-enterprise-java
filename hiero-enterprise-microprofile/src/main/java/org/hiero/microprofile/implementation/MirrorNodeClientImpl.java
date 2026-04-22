@@ -143,8 +143,12 @@ public class MirrorNodeClientImpl extends AbstractMirrorNodeClient<JsonObject> {
   }
 
   @Override
-  public @NonNull Page<NftMetadata> findNftTypesByOwner(AccountId ownerId) {
-    throw new RuntimeException("Not implemented");
+  public @NonNull Page<Nft> findNftTypesByOwner(@NonNull AccountId ownerId) throws HieroException {
+    Objects.requireNonNull(ownerId, "ownerId must not be null");
+    final String path = "/api/v1/accounts/" + ownerId + "/nfts";
+    final Function<JsonObject, List<Nft>> dataExtractionFunction =
+      node -> jsonConverter.toNfts(node);
+    return new RestBasedPage<>(restClient.getTarget(), dataExtractionFunction, path);
   }
 
   @Override

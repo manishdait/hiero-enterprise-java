@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import org.hiero.base.AccountClient;
+import org.hiero.base.FungibleTokenClient;
 import org.hiero.base.HieroContext;
+import org.hiero.base.HieroException;
 import org.hiero.base.NftClient;
 import org.hiero.base.data.Account;
 import org.hiero.base.data.Nft;
+import org.hiero.base.data.NftMetadata;
 import org.hiero.base.data.Page;
 import org.hiero.base.mirrornode.NftRepository;
 import org.hiero.test.HieroTestUtils;
@@ -25,6 +28,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class NftRepositoryTests {
 
   @Autowired private NftClient nftClient;
+
+  @Autowired private FungibleTokenClient fungibleTokenClient;
 
   @Autowired private NftRepository nftRepository;
 
@@ -411,5 +416,80 @@ public class NftRepositoryTests {
     // then
     Assertions.assertNotNull(result);
     Assertions.assertFalse(result.isPresent());
+  }
+
+  @Test
+  void shouldReturnNftMetadataForTokenId() throws HieroException {
+    final String name = "Tokemon cards";
+    final String symbol = "TOK";
+
+    final Account treasuryAccount = accountClient.createAccount();
+    final TokenId tokenId = nftClient.createNftType(name, symbol, treasuryAccount);
+
+    hieroTestUtils.waitForMirrorNodeRecords();
+
+    final Optional<NftMetadata> result = nftRepository.getNftMetadata(tokenId);
+
+    Assertions.assertTrue(result.isPresent());
+
+    final NftMetadata metadata = result.get();
+    Assertions.assertEquals(name, metadata.name());
+    Assertions.assertEquals(symbol, metadata.symbol());
+    Assertions.assertEquals(tokenId, metadata.tokenId());
+    Assertions.assertEquals(treasuryAccount.accountId(), metadata.treasuryAccountId());
+  }
+
+  @Test
+  void shouldReturnEmptyOptionalOfNftMetadataIfTokenIdNotPresent() throws HieroException {
+    TokenId tokenId = TokenId.fromString("0.0.99999999");
+    final Optional<NftMetadata> result = nftRepository.getNftMetadata(tokenId);
+
+    Assertions.assertFalse(result.isPresent());
+  }
+
+  @Test
+  void shouldRaiseExceptionOnGetNftMetadataIfNotNft() throws HieroException {
+    final String name = "Tokemon cards";
+    final String symbol = "TOK";
+
+    final TokenId tokenId = fungibleTokenClient.createToken(name, symbol);
+
+    hieroTestUtils.waitForMirrorNodeRecords();
+
+    final IllegalArgumentException e = Assertions.assertThrows(IllegalArgumentException.class, () -> nftRepository.getNftMetadata(tokenId));
+    Assertions.assertEquals("TokenId does not belong to an NFT", e.getMessage());
+  }
+
+  @Test
+  void shouldGetNftForByOwner() throws HieroException {
+    final Account owner = accountClient.createAccount();
+
+    final TokenId nftId1 = nftClient.createNftType("Nft Token 1", "NFT1");
+    final long serial = nftClient.mintNft(nftId1, "Hello, Hiero!".getBytes());
+
+    nftClient.associateNft(nftId1, owner);
+
+    nftClient.transferNft(nftId1, serial, hieroContext.getOperatorAccount(), owner.accountId());
+
+    final TokenId nftId2 = nftClient.createNftType("Nft Token 2", "NFT2", owner);
+    nftClient.mintNft(nftId2, "Hello, Hiero!".getBytes());
+    final TokenId fungibleTokenId = fungibleTokenClient.createToken("Fungible Token", "FT", owner);
+
+    hieroTestUtils.waitForMirrorNodeRecords();
+
+    Page<Nft> result = nftRepository.findByOwner(owner.accountId());
+
+    Assertions.assertFalse(result.getData().isEmpty());
+    Assertions.assertEquals(2, result.getData().size());
+  }
+
+  @Test
+  void shouldReturnEmptyNftListIfOwnerNotHaveNft() throws HieroException {
+    final Account owner = accountClient.createAccount();
+    hieroTestUtils.waitForMirrorNodeRecords();
+
+    Page<Nft> result = nftRepository.findByOwner(owner.accountId());
+
+    Assertions.assertTrue(result.getData().isEmpty());
   }
 }

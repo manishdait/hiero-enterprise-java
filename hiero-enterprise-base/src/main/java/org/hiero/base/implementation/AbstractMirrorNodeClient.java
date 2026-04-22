@@ -101,8 +101,10 @@ public abstract class AbstractMirrorNodeClient<JSON> implements MirrorNodeClient
   }
 
   @Override
-  public @NonNull Optional<NftMetadata> getNftMetadata(TokenId tokenId) throws HieroException {
-    throw new UnsupportedOperationException("Not yet implemented");
+  public @NonNull Optional<NftMetadata> getNftMetadata(@NonNull TokenId tokenId) throws HieroException {
+    Objects.requireNonNull(tokenId, "tokenId must not be null");
+    final JSON json = getRestClient().queryTokenById(tokenId);
+    return getJsonConverter().toNftMetadata(json);
   }
 
   @Override

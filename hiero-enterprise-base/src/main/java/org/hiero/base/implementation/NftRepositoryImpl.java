@@ -63,7 +63,7 @@ public class NftRepositoryImpl implements NftRepository {
 
   @NonNull
   @Override
-  public Page<NftMetadata> findTypesByOwner(@NonNull AccountId ownerId) throws HieroException {
+  public Page<Nft> findTypesByOwner(@NonNull AccountId ownerId) throws HieroException {
     return mirrorNodeClient.findNftTypesByOwner(ownerId);
   }
 

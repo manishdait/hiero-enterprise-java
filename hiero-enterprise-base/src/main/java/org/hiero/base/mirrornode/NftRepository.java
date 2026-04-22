@@ -31,7 +31,7 @@ public interface NftRepository {
    * @return first page of NFT types
    * @throws HieroException if the search fails
    */
-  @NonNull Page<NftMetadata> findTypesByOwner(@NonNull AccountId ownerId) throws HieroException;
+  @NonNull Page<Nft> findTypesByOwner(@NonNull AccountId ownerId) throws HieroException;
 
   /**
    * Return all NFT types owned by the given owner.
@@ -41,7 +41,7 @@ public interface NftRepository {
    * @throws HieroException if the search fails
    */
   @NonNull
-  default Page<NftMetadata> findTypesByOwner(@NonNull String ownerId) throws HieroException {
+  default Page<Nft> findTypesByOwner(@NonNull String ownerId) throws HieroException {
     Objects.requireNonNull(ownerId, "ownerId must not be null");
     return findTypesByOwner(AccountId.fromString(ownerId));
   }

@@ -35,6 +35,7 @@ import org.hiero.base.data.NetworkFee;
 import org.hiero.base.data.NetworkStake;
 import org.hiero.base.data.NetworkSupplies;
 import org.hiero.base.data.Nft;
+import org.hiero.base.data.NftMetadata;
 import org.hiero.base.data.NftTransfer;
 import org.hiero.base.data.Page;
 import org.hiero.base.data.RoyaltyFee;
@@ -50,6 +51,8 @@ import org.hiero.base.data.Transfer;
 import org.hiero.base.implementation.MirrorNodeJsonConverter;
 import org.hiero.base.protocol.data.TransactionType;
 import org.jspecify.annotations.NonNull;
+
+import javax.swing.text.html.Option;
 
 public class MirrorNodeJsonConverterImpl implements MirrorNodeJsonConverter<JsonNode> {
 
@@ -344,6 +347,30 @@ public class MirrorNodeJsonConverterImpl implements MirrorNodeJsonConverter<Json
         .filter(optional -> optional.isPresent())
         .map(optional -> optional.get())
         .toList();
+  }
+
+  @Override
+  public Optional<NftMetadata> toNftMetadata(@NonNull JsonNode node) {
+    Objects.requireNonNull(node, "node must not be null");
+    if (node.isNull() || node.isEmpty()) {
+      return Optional.empty();
+    }
+
+    TokenType tokenType = TokenType.valueOf(node.get("type").asText());
+    if (tokenType != TokenType.NON_FUNGIBLE_UNIQUE) {
+      throw new IllegalArgumentException("TokenId does not belong to an NFT");
+    }
+
+    try {
+      final TokenId tokenId = TokenId.fromString(node.get("token_id").asText());
+      final String name = node.get("name").asText();
+      final String symbol = node.get("symbol").asText();
+      final AccountId treasuryAccountId = AccountId.fromString(node.get("treasury_account_id").asText());
+
+      return Optional.of(new NftMetadata(tokenId, name, symbol, treasuryAccountId));
+    } catch (final Exception e) {
+      throw new JsonParseException(node, e);
+    }
   }
 
   @Override
