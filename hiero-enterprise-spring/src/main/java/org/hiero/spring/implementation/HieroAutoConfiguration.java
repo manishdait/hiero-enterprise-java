@@ -131,6 +131,7 @@ public class HieroAutoConfiguration {
       final HieroContext hieroContext, final HieroProperties properties) {
     final String mirrorNodeEndpoint;
     final List<String> mirrorNetwork = hieroContext.getClient().getMirrorNetwork();
+
     if (mirrorNetwork.isEmpty()) {
       throw new IllegalArgumentException("Mirror node endpoint must be set");
     }
