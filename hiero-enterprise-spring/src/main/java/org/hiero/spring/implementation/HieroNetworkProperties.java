@@ -20,8 +20,7 @@ public class HieroNetworkProperties {
   private List<HieroNode> nodes;
 
   /** Mirror node endpoint to connect to. */
-  @NestedConfigurationProperty
-  private MirrorNode mirrorNode = new MirrorNode();
+  @NestedConfigurationProperty private MirrorNode mirrorNode = new MirrorNode();
 
   /**
    * Optional base URL for the Java REST API (e.g. {@code http://localhost:8084} in Solo). Required
