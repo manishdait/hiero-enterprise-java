@@ -7,12 +7,12 @@ on:
     tags:
       - "v*.*.*"
 
-permissions:
-  contents: write
-
 jobs:
   publish:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
       - name: Harden Runner
