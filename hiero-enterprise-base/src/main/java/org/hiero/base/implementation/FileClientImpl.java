@@ -171,7 +171,7 @@ public class FileClientImpl implements FileClient {
       protocolLayerClient.executeFileAppendRequestTransaction(request);
     } else {
       if (log.isDebugEnabled()) {
-        int appendCount = Math.floorDiv(content.length, FileCreateRequest.FILE_CREATE_MAX_SIZE);
+        int appendCount = Math.ceilDiv(content.length, FileCreateRequest.FILE_CREATE_MAX_SIZE);
         log.debug(
             "Content of size {} is to big for 1 FileAppend transaction. Will append {} FileAppend transactions",
             content.length,

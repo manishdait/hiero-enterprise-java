@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 
 import com.hedera.hashgraph.sdk.FileId;
 import java.time.Instant;
+import java.util.List;
 import org.hiero.base.HieroException;
 import org.hiero.base.implementation.FileClientImpl;
 import org.hiero.base.protocol.ProtocolLayerClient;
@@ -30,11 +31,15 @@ import org.hiero.base.protocol.data.FileUpdateResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 public class FileClientImplTest {
   ProtocolLayerClient protocolLayerClient;
   FileClientImpl fileClientImpl;
+
+  ArgumentCaptor<FileAppendRequest> fileAppendCaptor =
+      ArgumentCaptor.forClass(FileAppendRequest.class);
 
   @BeforeEach
   void setup() {
@@ -251,8 +256,12 @@ public class FileClientImplTest {
     fileClientImpl.appendFile(fileId, content);
 
     verify(protocolLayerClient, times(1))
-        .executeFileAppendRequestTransaction(any(FileAppendRequest.class));
+        .executeFileAppendRequestTransaction(fileAppendCaptor.capture());
     verify(protocolLayerClient, times(1)).executeFileInfoQuery(any(FileInfoRequest.class));
+
+    final FileAppendRequest captureRequest = fileAppendCaptor.getValue();
+    Assertions.assertEquals(fileId, captureRequest.fileId());
+    Assertions.assertArrayEquals(content, captureRequest.contents());
   }
 
   @Test
@@ -315,8 +324,46 @@ public class FileClientImplTest {
 
     // call for each 2048 chunk
     verify(protocolLayerClient, times(2))
-        .executeFileAppendRequestTransaction(any(FileAppendRequest.class));
+        .executeFileAppendRequestTransaction(fileAppendCaptor.capture());
     verify(protocolLayerClient, times(1)).executeFileInfoQuery(any(FileInfoRequest.class));
+
+    final List<FileAppendRequest> capturedRequests = fileAppendCaptor.getAllValues();
+    Assertions.assertEquals(fileId, capturedRequests.get(0).fileId());
+    Assertions.assertEquals(
+        FileCreateRequest.FILE_CREATE_MAX_SIZE, capturedRequests.get(0).contents().length);
+
+    Assertions.assertEquals(fileId, capturedRequests.get(1).fileId());
+    Assertions.assertEquals(
+        FileCreateRequest.FILE_CREATE_MAX_SIZE, capturedRequests.get(1).contents().length);
+  }
+
+  @Test
+  void testAppendFileWithLargeContentUnevenSize() throws HieroException {
+    // mocks
+    final FileInfoResponse fileInfoResponse = Mockito.mock(FileInfoResponse.class);
+
+    // given
+    final FileId fileId = FileId.fromString("1.2.3");
+    final byte[] content = new byte[FileCreateRequest.FILE_CREATE_MAX_SIZE + 2];
+
+    when(protocolLayerClient.executeFileInfoQuery(any(FileInfoRequest.class)))
+        .thenReturn(fileInfoResponse);
+    when(fileInfoResponse.size()).thenReturn(1);
+
+    fileClientImpl.appendFile(fileId, content);
+
+    // call for each chunk 2048 and 2
+    verify(protocolLayerClient, times(2))
+        .executeFileAppendRequestTransaction(fileAppendCaptor.capture());
+    verify(protocolLayerClient, times(1)).executeFileInfoQuery(any(FileInfoRequest.class));
+
+    final List<FileAppendRequest> capturedRequests = fileAppendCaptor.getAllValues();
+    Assertions.assertEquals(fileId, capturedRequests.get(0).fileId());
+    Assertions.assertEquals(
+        FileCreateRequest.FILE_CREATE_MAX_SIZE, capturedRequests.get(0).contents().length);
+
+    Assertions.assertEquals(fileId, capturedRequests.get(1).fileId());
+    Assertions.assertEquals(2, capturedRequests.get(1).contents().length);
   }
 
   @Test
