@@ -195,7 +195,7 @@ public class MirrorNodeJsonConverterImpl implements MirrorNodeJsonConverter<Json
   @Override
   public @NonNull List<NetworkFee> toNetworkFees(@NonNull JsonObject jsonObject) {
 
-    if (!jsonObject.containsKey("nfts")) {
+    if (!jsonObject.containsKey("fees")) {
       return List.of();
     }
 
@@ -376,7 +376,7 @@ public class MirrorNodeJsonConverterImpl implements MirrorNodeJsonConverter<Json
 
   @Override
   public List<Nft> toNfts(@NonNull JsonObject jsonObject) {
-    if (!jsonObject.containsKey("transactions")) {
+    if (!jsonObject.containsKey("nfts")) {
       return List.of();
     }
 
