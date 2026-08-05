@@ -194,11 +194,15 @@ public class MirrorNodeJsonConverterImpl implements MirrorNodeJsonConverter<Json
 
   @Override
   public @NonNull List<NetworkFee> toNetworkFees(@NonNull JsonObject jsonObject) {
-
+    Objects.requireNonNull(jsonObject, "jsonObject must not be null");
     if (!jsonObject.containsKey("fees")) {
       return List.of();
     }
 
+    if (!isArray(jsonObject.get("fees"))) {
+      throw new IllegalArgumentException(
+          "Fees jsonObject is not an array: " + jsonObject.get("fees"));
+    }
     final JsonArray feesNode = jsonObject.getJsonArray("fees");
     return jsonArrayToStream(feesNode)
         .map(
@@ -380,10 +384,12 @@ public class MirrorNodeJsonConverterImpl implements MirrorNodeJsonConverter<Json
       return List.of();
     }
 
-    final JsonArray nftsArray = jsonObject.getJsonArray("nfts");
-    if (nftsArray.isEmpty()) {
-      throw new IllegalArgumentException("NFTs jsonObject is not an array: " + nftsArray);
+    if (!isArray(jsonObject.get("nfts"))) {
+      throw new IllegalArgumentException(
+          "NFTs jsonObject is not an array: " + jsonObject.get("nfts"));
     }
+    final JsonArray nftsArray = jsonObject.getJsonArray("nfts");
+
     Spliterator<JsonValue> spliterator =
         Spliterators.spliteratorUnknownSize(nftsArray.iterator(), Spliterator.ORDERED);
     return StreamSupport.stream(spliterator, false)
@@ -399,10 +405,12 @@ public class MirrorNodeJsonConverterImpl implements MirrorNodeJsonConverter<Json
     if (!jsonObject.containsKey("tokens")) {
       return List.of();
     }
-    final JsonArray tokens = jsonObject.getJsonArray("tokens");
-    if (tokens == null) {
+
+    if (!isArray(jsonObject.get("tokens"))) {
       throw new IllegalArgumentException("Tokens node is not an array");
     }
+    final JsonArray tokens = jsonObject.getJsonArray("tokens");
+
     Spliterator<JsonValue> spliterator =
         Spliterators.spliteratorUnknownSize(tokens.iterator(), Spliterator.ORDERED);
     return StreamSupport.stream(spliterator, false)
@@ -581,10 +589,12 @@ public class MirrorNodeJsonConverterImpl implements MirrorNodeJsonConverter<Json
     if (!jsonObject.containsKey("messages")) {
       return List.of();
     }
-    final JsonArray messages = jsonObject.getJsonArray("messages");
-    if (messages == null) {
-      throw new IllegalArgumentException("Messages array is not an array: " + messages);
+
+    if (!isArray(jsonObject.get("messages"))) {
+      throw new IllegalArgumentException(
+          "Messages array is not an array: " + jsonObject.get("messages"));
     }
+    final JsonArray messages = jsonObject.getJsonArray("messages");
 
     return jsonArrayToStream(messages)
         .map(n -> toTopicMessage(n.asJsonObject()))
@@ -932,10 +942,13 @@ public class MirrorNodeJsonConverterImpl implements MirrorNodeJsonConverter<Json
     if (!jsonObject.containsKey("contracts")) {
       return List.of();
     }
-    final JsonArray contractsArray = jsonObject.getJsonArray("contracts");
-    if (contractsArray == null) {
-      throw new IllegalArgumentException("No contracts array in JSON");
+
+    if (!isArray(jsonObject.get("contracts"))) {
+      throw new IllegalArgumentException(
+          "No contracts array in JSON: " + jsonObject.get("contracts"));
     }
+    final JsonArray contractsArray = jsonObject.getJsonArray("contracts");
+
     final Spliterator<JsonValue> spliterator =
         Spliterators.spliteratorUnknownSize(contractsArray.iterator(), Spliterator.ORDERED);
     return StreamSupport.stream(spliterator, false)
@@ -1000,10 +1013,12 @@ public class MirrorNodeJsonConverterImpl implements MirrorNodeJsonConverter<Json
       return List.of();
     }
 
-    final JsonArray blocks = jsonObject.getJsonArray("blocks");
-    if (blocks == null) {
-      throw new IllegalArgumentException("Blocks array is not an array: " + blocks);
+    if (!isArray(jsonObject.get("blocks"))) {
+      throw new IllegalArgumentException(
+          "Blocks array is not an array: " + jsonObject.get("blocks"));
     }
+
+    final JsonArray blocks = jsonObject.getJsonArray("blocks");
 
     return jsonArrayToStream(blocks)
         .map(n -> toBlock(n.asJsonObject()))
@@ -1066,5 +1081,9 @@ public class MirrorNodeJsonConverterImpl implements MirrorNodeJsonConverter<Json
     Objects.requireNonNull(jsonObject, "jsonObject must not be null");
     Objects.requireNonNull(field, "field must not be null");
     return jsonObject.containsKey(field) && !jsonObject.isNull(field);
+  }
+
+  private boolean isArray(JsonValue jsonValue) {
+    return jsonValue != null && jsonValue.getValueType() == JsonValue.ValueType.ARRAY;
   }
 }
