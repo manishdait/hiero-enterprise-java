@@ -340,8 +340,12 @@ public class ProtocolLayerClientImpl implements ProtocolLayerClient {
             .setTransactionValidDuration(request.transactionValidDuration())
             .setBytecodeFileId(request.fileId())
             .setGas(request.gas())
-            .setConstructorParameters(constructorParams)
-            .setAdminKey(request.adminKey());
+            .setConstructorParameters(constructorParams);
+
+    if (request.adminKey() != null) {
+      transaction.setAdminKey(request.adminKey());
+    }
+
     sign(transaction, request.adminKey());
     final TransactionReceipt receipt =
         executeTransactionAndWaitOnReceipt(transaction, TransactionType.CONTRACT_CREATE);

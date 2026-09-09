@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.hiero.base.FileClient;
+import org.hiero.base.HieroContext;
 import org.hiero.base.HieroException;
 import org.hiero.base.SmartContractClient;
 import org.hiero.base.data.ContractCallResult;
@@ -26,6 +27,8 @@ public class SmartContractClientTest {
   @Autowired private FileClient fileClient;
 
   @Autowired private SmartContractClient smartContractClient;
+
+  @Autowired private HieroContext hieroContext;
 
   @Test
   void testContractCreateByFileId() throws Exception {
@@ -244,7 +247,7 @@ public class SmartContractClientTest {
   }
 
   @Test
-  void testDeleteContract() throws Exception {
+  void testDeleteContractImmutableContract() throws Exception {
     final Path path =
         Path.of(
             SmartContractClientTest.class
@@ -252,26 +255,15 @@ public class SmartContractClientTest {
                 .getPath());
     final ContractId contractId = smartContractClient.createContract(path);
 
-    // set initial value
-    smartContractClient.callContractFunction(contractId, "set", int256(123));
-    final ContractCallResult result1 = smartContractClient.callContractFunction(contractId, "get");
-
-    Assertions.assertNotNull(result1);
-    Assertions.assertNotNull(result1.getInt256(0));
-    Assertions.assertEquals(123, result1.getUint256(0).intValue());
-
-    // delete contract
-    smartContractClient.deleteContract(contractId);
-    final ContractCallResult result2 = smartContractClient.callContractFunction(contractId, "get");
-    Assertions.assertNotNull(result2);
-
-    // since the contract is mark deleted the function call work without and error, but not return
-    // anything
-    Assertions.assertThrows(IndexOutOfBoundsException.class, () -> result2.getInt256(0));
+    Assertions.assertThrows(
+        HieroException.class,
+        () ->
+            smartContractClient.deleteContract(
+                contractId, hieroContext.getOperatorAccount().privateKey()));
   }
 
   @Test
-  void testDeleteContractWithAdminKey() throws Exception {
+  void testDeleteContract() throws Exception {
     final Path path =
         Path.of(
             SmartContractClientTest.class
@@ -310,9 +302,6 @@ public class SmartContractClientTest {
 
     final ContractId contractId = smartContractClient.createContract(path, adminKey);
 
-    // no adminKey default to operator privateKey
-    Assertions.assertThrows(
-        HieroException.class, () -> smartContractClient.deleteContract(contractId));
     // invalid adminKey
     Assertions.assertThrows(
         HieroException.class,

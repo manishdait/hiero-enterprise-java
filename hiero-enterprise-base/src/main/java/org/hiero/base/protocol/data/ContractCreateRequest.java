@@ -17,7 +17,7 @@ public record ContractCreateRequest(
     @NonNull Duration transactionValidDuration,
     @NonNull FileId fileId,
     int gas,
-    @NonNull PrivateKey adminKey,
+    @Nullable PrivateKey adminKey,
     @NonNull List<ContractParam<?>> constructorParams)
     implements TransactionRequest {
 
@@ -28,7 +28,6 @@ public record ContractCreateRequest(
     Objects.requireNonNull(transactionValidDuration, "transactionValidDuration is required");
     Objects.requireNonNull(fileId, "fileId is required");
     Objects.requireNonNull(constructorParams, "constructorParams is required");
-    Objects.requireNonNull(adminKey, "adminKey must not be null");
 
     if (maxTransactionFee.toTinybars() < 0) {
       throw new IllegalArgumentException("maxTransactionFee must be non-negative");
@@ -47,11 +46,11 @@ public record ContractCreateRequest(
       @NonNull String fileId,
       @NonNull Hbar maxTransactionFee,
       int gas,
-      @NonNull PrivateKey adminKey,
+      @Nullable PrivateKey adminKey,
       @Nullable ContractParam<?>... constructorParams) {
     Objects.requireNonNull(fileId, "fileId must not be null");
     Objects.requireNonNull(maxTransactionFee, "maxTransactionFee must not be null");
-    Objects.requireNonNull(adminKey, "adminKey must not be null");
+
     return of(FileId.fromString(fileId), maxTransactionFee, gas, adminKey, constructorParams);
   }
 
@@ -60,8 +59,11 @@ public record ContractCreateRequest(
       @NonNull FileId fileId,
       @NonNull Hbar maxTransactionFee,
       int gas,
-      @NonNull PrivateKey adminKey,
+      @Nullable PrivateKey adminKey,
       @Nullable ContractParam<?>... constructorParams) {
+    Objects.requireNonNull(fileId, "fileId must not be null");
+    Objects.requireNonNull(maxTransactionFee, "maxTransactionFee must not be null");
+
     if (constructorParams == null) {
       return of(fileId, maxTransactionFee, gas, adminKey, List.of());
     } else {
@@ -74,11 +76,11 @@ public record ContractCreateRequest(
       @NonNull String fileId,
       @NonNull Hbar maxTransactionFee,
       int gas,
-      @NonNull PrivateKey adminKey,
+      @Nullable PrivateKey adminKey,
       @NonNull List<ContractParam<?>> constructorParams) {
     Objects.requireNonNull(fileId, "fileId must not be null");
     Objects.requireNonNull(maxTransactionFee, "maxTransactionFee must not be null");
-    return of(FileId.fromString(fileId), maxTransactionFee, gas, adminKey, constructorParams);
+    return of(FileId.fromString(fileId), maxTransactionFee, gas, null, constructorParams);
   }
 
   @NonNull
@@ -86,7 +88,7 @@ public record ContractCreateRequest(
       @NonNull FileId fileId,
       @NonNull Hbar maxTransactionFee,
       int gas,
-      @NonNull PrivateKey adminKey,
+      @Nullable PrivateKey adminKey,
       @NonNull List<ContractParam<?>> constructorParams) {
     return new ContractCreateRequest(
         maxTransactionFee,

@@ -65,7 +65,6 @@ public class SmartContractClientImplTest {
 
   @Test
   public void shouldCreateContractWithFileId() throws HieroException {
-    final PrivateKey mockAdminKey = PrivateKey.generateECDSA();
     final ContractId mockContractId = ContractId.fromString("0.0.1");
     final ContractCreateResult mockResponse = mock(ContractCreateResult.class);
 
@@ -74,7 +73,6 @@ public class SmartContractClientImplTest {
 
     // then
     when(mockResponse.contractId()).thenReturn(mockContractId);
-    when(mockOperatorAccount.privateKey()).thenReturn(mockAdminKey);
     when(mockProtocolLayerClient.executeContractCreateTransaction(any(ContractCreateRequest.class)))
         .thenReturn(mockResponse);
 
@@ -83,7 +81,6 @@ public class SmartContractClientImplTest {
     // verify
     verify(mockProtocolLayerClient, times(1))
         .executeContractCreateTransaction(contractCreateRequestCaptor.capture());
-    verify(mockOperatorAccount, times(1)).privateKey();
     verify(mockResponse, times(1)).contractId();
 
     Assertions.assertEquals(mockContractId, contractId);
@@ -98,7 +95,6 @@ public class SmartContractClientImplTest {
 
   @Test
   public void shouldCreateContractWithFileIdAndConstructorParameters() throws HieroException {
-    final PrivateKey mockAdminKey = PrivateKey.generateECDSA();
     final ContractId mockContractId = ContractId.fromString("0.0.1");
     final ContractCreateResult mockResponse = mock(ContractCreateResult.class);
 
@@ -109,7 +105,6 @@ public class SmartContractClientImplTest {
 
     // then
     when(mockResponse.contractId()).thenReturn(mockContractId);
-    when(mockOperatorAccount.privateKey()).thenReturn(mockAdminKey);
     when(mockProtocolLayerClient.executeContractCreateTransaction(any(ContractCreateRequest.class)))
         .thenReturn(mockResponse);
 
@@ -118,7 +113,6 @@ public class SmartContractClientImplTest {
     // verify
     verify(mockProtocolLayerClient, times(1))
         .executeContractCreateTransaction(contractCreateRequestCaptor.capture());
-    verify(mockOperatorAccount, times(1)).privateKey();
     verify(mockResponse, times(1)).contractId();
 
     Assertions.assertEquals(mockContractId, contractId);
@@ -134,7 +128,6 @@ public class SmartContractClientImplTest {
 
   @Test
   public void shouldCreateContractWithFileIdUsesCustomMaxFeeAndGasConfig() throws HieroException {
-    final PrivateKey mockAdminKey = PrivateKey.generateECDSA();
     final ContractId mockContractId = ContractId.fromString("0.0.1");
     final ContractCreateResult mockResponse = mock(ContractCreateResult.class);
 
@@ -146,7 +139,6 @@ public class SmartContractClientImplTest {
     final int gas = 1_000_000;
 
     // then
-    when(mockOperatorAccount.privateKey()).thenReturn(mockAdminKey);
     when(mockResponse.contractId()).thenReturn(mockContractId);
     when(mockProtocolLayerClient.executeContractCreateTransaction(any(ContractCreateRequest.class)))
         .thenReturn(mockResponse);
@@ -157,7 +149,6 @@ public class SmartContractClientImplTest {
     // verify
     verify(mockProtocolLayerClient, times(1))
         .executeContractCreateTransaction(contractCreateRequestCaptor.capture());
-    verify(mockOperatorAccount, times(1)).privateKey();
     verify(mockResponse, times(1)).contractId();
 
     Assertions.assertEquals(mockContractId, contractId);
@@ -173,7 +164,6 @@ public class SmartContractClientImplTest {
 
   @Test
   public void createContractWithContents() throws HieroException {
-    PrivateKey mockAdminKey = PrivateKey.generateECDSA();
     final FileId mockFileId = FileId.fromString("0.0.101");
     final ContractId mockContractId = ContractId.fromString("0.0.1");
     final ContractCreateResult mockResponse = mock(ContractCreateResult.class);
@@ -183,7 +173,6 @@ public class SmartContractClientImplTest {
 
     // then
     when(mockResponse.contractId()).thenReturn(mockContractId);
-    when(mockOperatorAccount.privateKey()).thenReturn(mockAdminKey);
     when(mockFileClient.createFile(contents)).thenReturn(mockFileId);
     when(mockProtocolLayerClient.executeContractCreateTransaction(any(ContractCreateRequest.class)))
         .thenReturn(mockResponse);
@@ -193,7 +182,6 @@ public class SmartContractClientImplTest {
     // verify
     verify(mockProtocolLayerClient, times(1))
         .executeContractCreateTransaction(contractCreateRequestCaptor.capture());
-    verify(mockOperatorAccount, times(1)).privateKey();
     verify(mockResponse, times(1)).contractId();
     verify(mockFileClient, times(1)).createFile(contents);
     verify(mockFileClient, times(1)).deleteFile(mockFileId);
@@ -210,7 +198,6 @@ public class SmartContractClientImplTest {
 
   @Test
   public void createContractWithContentsAndConstructorParameters() throws HieroException {
-    final PrivateKey mockAdminKey = PrivateKey.generateECDSA();
     final FileId mockFileId = FileId.fromString("0.0.101");
     final ContractId mockContractId = ContractId.fromString("0.0.1");
     final ContractCreateResult mockResponse = mock(ContractCreateResult.class);
@@ -222,7 +209,6 @@ public class SmartContractClientImplTest {
 
     // then
     when(mockResponse.contractId()).thenReturn(mockContractId);
-    when(mockOperatorAccount.privateKey()).thenReturn(mockAdminKey);
     when(mockFileClient.createFile(contents)).thenReturn(mockFileId);
     when(mockProtocolLayerClient.executeContractCreateTransaction(any(ContractCreateRequest.class)))
         .thenReturn(mockResponse);
@@ -232,7 +218,6 @@ public class SmartContractClientImplTest {
     // verify
     verify(mockProtocolLayerClient, times(1))
         .executeContractCreateTransaction(contractCreateRequestCaptor.capture());
-    verify(mockOperatorAccount, times(1)).privateKey();
     verify(mockResponse, times(1)).contractId();
     verify(mockFileClient, times(1)).createFile(contents);
     verify(mockFileClient, times(1)).deleteFile(mockFileId);
@@ -250,7 +235,6 @@ public class SmartContractClientImplTest {
 
   @Test
   public void createContractWithContentsWithCustomMaxFeeAndGas() throws HieroException {
-    final PrivateKey mockAdminKey = PrivateKey.generateECDSA();
     final FileId mockFileId = FileId.fromString("0.0.101");
     final ContractId mockContractId = ContractId.fromString("0.0.1");
     final ContractCreateResult mockResponse = mock(ContractCreateResult.class);
@@ -264,7 +248,6 @@ public class SmartContractClientImplTest {
 
     // then
     when(mockResponse.contractId()).thenReturn(mockContractId);
-    when(mockOperatorAccount.privateKey()).thenReturn(mockAdminKey);
     when(mockFileClient.createFile(contents)).thenReturn(mockFileId);
     when(mockProtocolLayerClient.executeContractCreateTransaction(any(ContractCreateRequest.class)))
         .thenReturn(mockResponse);
@@ -275,7 +258,6 @@ public class SmartContractClientImplTest {
     // verify
     verify(mockProtocolLayerClient, times(1))
         .executeContractCreateTransaction(contractCreateRequestCaptor.capture());
-    verify(mockOperatorAccount, times(1)).privateKey();
     verify(mockResponse, times(1)).contractId();
     verify(mockFileClient, times(1)).createFile(contents);
     verify(mockFileClient, times(1)).deleteFile(mockFileId);
@@ -293,7 +275,6 @@ public class SmartContractClientImplTest {
 
   @Test
   public void createContractWithPath() throws Exception {
-    final PrivateKey mockAdminKey = PrivateKey.generateECDSA();
     final FileId mockFileId = FileId.fromString("0.0.101");
     final ContractId mockContractId = ContractId.fromString("0.0.1");
     final ContractCreateResult mockResponse = mock(ContractCreateResult.class);
@@ -305,7 +286,6 @@ public class SmartContractClientImplTest {
 
     // then
     when(mockFileClient.createFile(contents)).thenReturn(mockFileId);
-    when(mockOperatorAccount.privateKey()).thenReturn(mockAdminKey);
     when(mockProtocolLayerClient.executeContractCreateTransaction(any(ContractCreateRequest.class)))
         .thenReturn(mockResponse);
     when(mockResponse.contractId()).thenReturn(mockContractId);
@@ -316,7 +296,6 @@ public class SmartContractClientImplTest {
     verify(mockProtocolLayerClient, times(1))
         .executeContractCreateTransaction(contractCreateRequestCaptor.capture());
     verify(mockResponse, times(1)).contractId();
-    verify(mockOperatorAccount, times(1)).privateKey();
     verify(mockFileClient, times(1)).createFile(contents);
     verify(mockFileClient, times(1)).deleteFile(mockFileId);
 
@@ -332,7 +311,6 @@ public class SmartContractClientImplTest {
 
   @Test
   public void createContractWithPathAndConstructorParameters() throws Exception {
-    final PrivateKey mockAdminKey = PrivateKey.generateECDSA();
     final FileId mockFileId = FileId.fromString("0.0.101");
     final ContractId mockContractId = ContractId.fromString("0.0.1");
     final ContractCreateResult mockResponse = mock(ContractCreateResult.class);
@@ -347,7 +325,6 @@ public class SmartContractClientImplTest {
 
     // then
     when(mockFileClient.createFile(contents)).thenReturn(mockFileId);
-    when(mockOperatorAccount.privateKey()).thenReturn(mockAdminKey);
     when(mockProtocolLayerClient.executeContractCreateTransaction(any(ContractCreateRequest.class)))
         .thenReturn(mockResponse);
     when(mockResponse.contractId()).thenReturn(mockContractId);
@@ -358,7 +335,6 @@ public class SmartContractClientImplTest {
     verify(mockProtocolLayerClient, times(1))
         .executeContractCreateTransaction(contractCreateRequestCaptor.capture());
     verify(mockResponse, times(1)).contractId();
-    verify(mockOperatorAccount, times(1)).privateKey();
     verify(mockFileClient, times(1)).createFile(contents);
     verify(mockFileClient, times(1)).deleteFile(mockFileId);
 
@@ -375,7 +351,6 @@ public class SmartContractClientImplTest {
 
   @Test
   public void createContractWithPathWithCustomMaxFeeAndGas() throws Exception {
-    final PrivateKey mockAdminKey = PrivateKey.generateECDSA();
     final FileId mockFileId = FileId.fromString("0.0.101");
     final ContractId mockContractId = ContractId.fromString("0.0.1");
     final ContractCreateResult mockResponse = mock(ContractCreateResult.class);
@@ -392,7 +367,6 @@ public class SmartContractClientImplTest {
 
     // then
     when(mockFileClient.createFile(contents)).thenReturn(mockFileId);
-    when(mockOperatorAccount.privateKey()).thenReturn(mockAdminKey);
     when(mockProtocolLayerClient.executeContractCreateTransaction(any(ContractCreateRequest.class)))
         .thenReturn(mockResponse);
     when(mockResponse.contractId()).thenReturn(mockContractId);
@@ -403,7 +377,6 @@ public class SmartContractClientImplTest {
     // verify
     verify(mockProtocolLayerClient, times(1))
         .executeContractCreateTransaction(contractCreateRequestCaptor.capture());
-    verify(mockOperatorAccount, times(1)).privateKey();
     verify(mockResponse, times(1)).contractId();
     verify(mockFileClient, times(1)).createFile(contents);
     verify(mockFileClient, times(1)).deleteFile(mockFileId);
@@ -763,37 +736,6 @@ public class SmartContractClientImplTest {
   }
 
   @Test
-  public void shouldDeleteContract() throws HieroException {
-    // mocks
-    final AccountId mockAccountId = AccountId.fromString("0.0.1");
-    final PrivateKey mockAdminKey = PrivateKey.generateECDSA();
-
-    // given
-    final ContractId contractId = ContractId.fromString("0.0.100");
-
-    // when
-    when(mockOperatorAccount.accountId()).thenReturn(mockAccountId);
-    when(mockOperatorAccount.privateKey()).thenReturn(mockAdminKey);
-
-    smartContractClient.deleteContract(contractId);
-
-    // then
-    verify(mockOperatorAccount, times(1)).accountId();
-    verify(mockOperatorAccount, times(1)).privateKey();
-    verify(mockProtocolLayerClient, times(1))
-        .executeContractDeleteTransaction(contractDeleteRequestCaptor.capture());
-
-    final ContractDeleteRequest capture = contractDeleteRequestCaptor.getValue();
-    Assertions.assertNotNull(capture);
-    Assertions.assertEquals(contractId, capture.contractId());
-    Assertions.assertEquals(mockAccountId, capture.transferFeeToAccountId());
-    Assertions.assertNull(capture.transferFeeToContractId());
-    Assertions.assertEquals(mockAdminKey, capture.adminKey());
-    Assertions.assertEquals(DEFAULT_MAX_TRANSACTION_FEE, capture.maxTransactionFee());
-    Assertions.assertEquals(DEFAULT_TRANSACTION_VALID_DURATION, capture.transactionValidDuration());
-  }
-
-  @Test
   public void shouldDeleteContractWithAdminKey() throws HieroException {
     // mocks
     final AccountId mockAccountId = AccountId.fromString("0.0.1");
@@ -826,11 +768,6 @@ public class SmartContractClientImplTest {
   @Test
   public void shouldThrowExceptionsOnDeleteContractWithNullContractId() {
     Assertions.assertThrows(
-        NullPointerException.class, () -> smartContractClient.deleteContract((ContractId) null));
-    Assertions.assertThrows(
-        NullPointerException.class, () -> smartContractClient.deleteContract((String) null));
-
-    Assertions.assertThrows(
         NullPointerException.class,
         () ->
             smartContractClient.deleteContract(ContractId.fromString("0.0.1"), (PrivateKey) null));
@@ -839,33 +776,6 @@ public class SmartContractClientImplTest {
     Assertions.assertThrows(
         NullPointerException.class,
         () -> smartContractClient.deleteContract(null, (PrivateKey) null));
-  }
-
-  @Test
-  public void shouldDeleteContractWithTransferAccountId() throws HieroException {
-    // mocks
-    final PrivateKey mockAdminKey = PrivateKey.generateECDSA();
-
-    // given
-    final AccountId toAccountId = AccountId.fromString("0.0.1");
-    final ContractId contractId = ContractId.fromString("0.0.100");
-
-    when(mockOperatorAccount.privateKey()).thenReturn(mockAdminKey);
-
-    smartContractClient.deleteContract(contractId, toAccountId);
-
-    verify(mockOperatorAccount, times(1)).privateKey();
-    verify(mockProtocolLayerClient, times(1))
-        .executeContractDeleteTransaction(contractDeleteRequestCaptor.capture());
-
-    final ContractDeleteRequest capture = contractDeleteRequestCaptor.getValue();
-    Assertions.assertNotNull(capture);
-    Assertions.assertEquals(contractId, capture.contractId());
-    Assertions.assertEquals(toAccountId, capture.transferFeeToAccountId());
-    Assertions.assertNull(capture.transferFeeToContractId());
-    Assertions.assertEquals(mockAdminKey, capture.adminKey());
-    Assertions.assertEquals(DEFAULT_MAX_TRANSACTION_FEE, capture.maxTransactionFee());
-    Assertions.assertEquals(DEFAULT_TRANSACTION_VALID_DURATION, capture.transactionValidDuration());
   }
 
   @Test
@@ -898,45 +808,10 @@ public class SmartContractClientImplTest {
 
     Assertions.assertThrows(
         NullPointerException.class,
-        () -> smartContractClient.deleteContract(contractId, (AccountId) null));
-    Assertions.assertThrows(
-        NullPointerException.class, () -> smartContractClient.deleteContract(null, accountId));
-    Assertions.assertThrows(
-        NullPointerException.class,
-        () -> smartContractClient.deleteContract(null, (AccountId) null));
-    Assertions.assertThrows(
-        NullPointerException.class,
         () -> smartContractClient.deleteContract(contractId, accountId, null));
     Assertions.assertThrows(
         NullPointerException.class,
         () -> smartContractClient.deleteContract(null, (AccountId) null, null));
-  }
-
-  @Test
-  public void shouldDeleteContractWithTransferContractId() throws HieroException {
-    // mocks
-    final PrivateKey mockAdminKey = PrivateKey.generateECDSA();
-
-    // given
-    final ContractId toContractId = ContractId.fromString("0.0.101");
-    final ContractId contractId = ContractId.fromString("0.0.100");
-
-    when(mockOperatorAccount.privateKey()).thenReturn(mockAdminKey);
-
-    smartContractClient.deleteContract(contractId, toContractId);
-
-    verify(mockOperatorAccount, times(1)).privateKey();
-    verify(mockProtocolLayerClient, times(1))
-        .executeContractDeleteTransaction(contractDeleteRequestCaptor.capture());
-
-    final ContractDeleteRequest capture = contractDeleteRequestCaptor.getValue();
-    Assertions.assertNotNull(capture);
-    Assertions.assertEquals(contractId, capture.contractId());
-    Assertions.assertNull(capture.transferFeeToAccountId());
-    Assertions.assertEquals(toContractId, capture.transferFeeToContractId());
-    Assertions.assertEquals(mockAdminKey, capture.adminKey());
-    Assertions.assertEquals(DEFAULT_MAX_TRANSACTION_FEE, capture.maxTransactionFee());
-    Assertions.assertEquals(DEFAULT_TRANSACTION_VALID_DURATION, capture.transactionValidDuration());
   }
 
   @Test
@@ -948,7 +823,6 @@ public class SmartContractClientImplTest {
 
     smartContractClient.deleteContract(contractId, toContractId, adminKey);
 
-    verify(mockOperatorAccount, never()).privateKey();
     verify(mockProtocolLayerClient, times(1))
         .executeContractDeleteTransaction(contractDeleteRequestCaptor.capture());
 
@@ -966,14 +840,6 @@ public class SmartContractClientImplTest {
   public void shouldThrowExceptionsOnDeleteContractWithTransferContractIdNullParams() {
     final ContractId contractId = ContractId.fromString("0.0.100");
 
-    Assertions.assertThrows(
-        NullPointerException.class,
-        () -> smartContractClient.deleteContract(contractId, (ContractId) null));
-    Assertions.assertThrows(
-        NullPointerException.class, () -> smartContractClient.deleteContract(null, contractId));
-    Assertions.assertThrows(
-        NullPointerException.class,
-        () -> smartContractClient.deleteContract(null, (ContractId) null));
     Assertions.assertThrows(
         NullPointerException.class,
         () -> smartContractClient.deleteContract(contractId, contractId, null));

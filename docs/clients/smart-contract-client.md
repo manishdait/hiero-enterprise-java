@@ -33,12 +33,8 @@
 | `callContractFunction(ContractId contractId, String functionName, ContractParam<?>... params)`                                  | Executes a contract function using a contract ID.                                                                                                       |
 | `callContractFunction(String contractId, String functionName, Hbar maxTransactionFee, int gas, ContractParam<?>... params)`     | Executes a smart contract function using a contract ID string with a custom maximum transaction fee and gas limit.                                      |
 | `callContractFunction(ContractId contractId, String functionName, Hbar maxTransactionFee, int gas, ContractParam<?>... params)` | Executes a smart contract function using a contract ID with a custom maximum transaction fee and gas limit.                                             |
-| `deleteContract(String contractId)`                                                                                             | Marks the specified smart contract as deleted.                                                                                                          |
-| `deleteContract(ContractId contractId)`                                                                                         | Marks the specified smart contract as deleted.                                                                                                          |
-| `deleteContract(ContractId contractId, ContractId toContractId)`                                                                | Marks the specified smart contract as deleted and transfers its remaining balance to another contract.                                                  |
-| `deleteContract(ContractId contractId, AccountId toAccountId)`                                                                  | Marks the specified smart contract as deleted and transfers its remaining balance to an account.                                                        |
-| `deleteContract(String contractId, String adminKey)`                                                                            | Marks the specified smart contract as deleted using the specified DER-encoded private key as the admin key.                                             |
-| `deleteContract(ContractId contractId, PrivateKey adminKey)`                                                                                                                              | Marks the specified smart contract as deleted using the specified private key as the admin key.                                                         |
+| `deleteContract(String contractId, String adminKey)`                                                                            | Marks the specified smart contract as deleted using the specified DER-encoded private key as the admin key. The remaining balance is transfer to operator account.                                             |
+| `deleteContract(ContractId contractId, PrivateKey adminKey)`                                                                                                                              | Marks the specified smart contract as deleted using the specified private key as the admin key. The remaining balance is transfer to operator account.                                                        |
 | `deleteContract(ContractId contractId, ContractId toContractId, PrivateKey adminKey)`                                                                                                                              | Marks the specified smart contract as deleted using the specified private key as the admin key and transfers its remaining balance to another contract. |
 | `deleteContract(ContractId contractId, AccountId toAccountId, PrivateKey adminKey)`                                                                                                                                | Marks the specified smart contract as deleted using the specified private key as the admin key and transfers its remaining balance to an account.                                                                                                                                                        |
 
@@ -105,7 +101,6 @@ ContractId contractId =
     
     A contract can be deployed with an admin key by using the `createContract` overloads that accept a `PrivateKey`. The admin key can be used to authorize administrative operations on the contract, for deleting the contract.
 
-    If no admin key is explicitly provided, the configured operator account's key is used as the contract admin key.
 
 ```java title="createContract(FileId fileId, PrivateKey adminKey, ContractParam<?>... constructorParams)"
 FileId fileId =
@@ -157,39 +152,6 @@ Marks a smart contract as deleted on the Hiero network.
 !!! info
     
     The remaining balance of the deleted contract can optionally be transferred to another contract or account.
-
-```java title="deleteContract(ContractId contractId)"
-ContractId contractId =
-    ContractId.fromString("0.0.5678");
-
-smartContractClient.deleteContract(contractId);
-```
-
-```java title="deleteContract(ContractId contractId, ContractId toContractId)"
-ContractId contractId =
-    ContractId.fromString("0.0.5678");
-
-ContractId toContractId =
-    ContractId.fromString("0.0.1234");
-
-smartContractClient.deleteContract(contractId, toContractId);
-```
-
-```java title="deleteContract(ContractId contractId, AccountId toAccountId)"
-ContractId contractId =
-    ContractId.fromString("0.0.5678");
-
-AccountId toAccountId =
-    AccountId.fromString("0.0.1001");
-
-smartContractClient.deleteContract(contractId, toAccountId);
-```
-
-!!! info
-
-    The `deleteContract` API provides overloads that accept a `PrivateKey` as the contract admin key.
-
-    If an admin key is not explicitly provided when the contract is created, the configured operator account's key is used as the contract admin key.
 
 ```java title="deleteContract(ContractId contractId, PrivateKey adminKey)"
 ContractId contractId =
