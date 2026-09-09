@@ -147,7 +147,7 @@ public interface SmartContractClient {
    * @throws HieroException if the contract could not be created
    */
   @NonNull ContractId createContract(
-      @NonNull byte[] contents,
+      byte[] contents,
       @NonNull Hbar maxTransactionFee,
       int gas,
       @Nullable ContractParam<?>... constructorParams)
@@ -182,7 +182,10 @@ public interface SmartContractClient {
    * @throws HieroException if the contract could not be created
    */
   default @NonNull ContractId createContract(
-      String fileId, String adminKey, ContractParam<?>... constructorParams) throws HieroException {
+      @NonNull String fileId,
+      @NonNull String adminKey,
+      @Nullable ContractParam<?>... constructorParams)
+      throws HieroException {
     Objects.requireNonNull(fileId, "fileId must not be null");
     Objects.requireNonNull(adminKey, "adminKey must not be null");
 
@@ -201,7 +204,9 @@ public interface SmartContractClient {
    * @throws HieroException if the contract could not be created
    */
   default @NonNull ContractId createContract(
-      FileId fileId, PrivateKey adminKey, ContractParam<?>... constructorParams)
+      @NonNull FileId fileId,
+      @NonNull PrivateKey adminKey,
+      @Nullable ContractParam<?>... constructorParams)
       throws HieroException {
     Objects.requireNonNull(fileId, "fileId must not be null");
     Objects.requireNonNull(adminKey, "adminKey must not be null");
@@ -220,7 +225,9 @@ public interface SmartContractClient {
    * @throws HieroException if the contract could not be created
    */
   default @NonNull ContractId createContract(
-      byte[] contents, PrivateKey adminKey, ContractParam<?>... constructorParams)
+      byte[] contents,
+      @NonNull PrivateKey adminKey,
+      @Nullable ContractParam<?>... constructorParams)
       throws HieroException {
     Objects.requireNonNull(contents, "contents must not be null");
     Objects.requireNonNull(adminKey, "adminKey must not be null");
@@ -243,7 +250,9 @@ public interface SmartContractClient {
    * @throws HieroException if the contract could not be created
    */
   default @NonNull ContractId createContract(
-      Path pathToBin, PrivateKey adminKey, ContractParam<?>... constructorParams)
+      @NonNull Path pathToBin,
+      @NonNull PrivateKey adminKey,
+      @Nullable ContractParam<?>... constructorParams)
       throws HieroException {
     Objects.requireNonNull(pathToBin, "pathToBin must not be null");
     Objects.requireNonNull(adminKey, "adminKey must not be null");
@@ -268,14 +277,15 @@ public interface SmartContractClient {
    * @throws HieroException if the contract could not be created
    */
   default @NonNull ContractId createContract(
-      String fileId,
-      Hbar maxTransactionFee,
+      @NonNull String fileId,
+      @NonNull Hbar maxTransactionFee,
       int gas,
-      String adminKey,
-      ContractParam<?>... constructorParams)
+      @NonNull String adminKey,
+      @Nullable ContractParam<?>... constructorParams)
       throws HieroException {
     Objects.requireNonNull(fileId, "fileId must not be null");
     Objects.requireNonNull(maxTransactionFee, "maxTransactionFee must not be null");
+    Objects.requireNonNull(adminKey, "adminKey must not be null");
     return createContract(
         FileId.fromString(fileId),
         maxTransactionFee,
@@ -297,11 +307,11 @@ public interface SmartContractClient {
    * @throws HieroException if the contract could not be created
    */
   @NonNull ContractId createContract(
-      FileId fileId,
-      Hbar maxTransactionFee,
+      @NonNull FileId fileId,
+      @NonNull Hbar maxTransactionFee,
       int gas,
-      PrivateKey adminKey,
-      ContractParam<?>... constructorParams)
+      @NonNull PrivateKey adminKey,
+      @Nullable ContractParam<?>... constructorParams)
       throws HieroException;
 
   /**
@@ -318,10 +328,10 @@ public interface SmartContractClient {
    */
   @NonNull ContractId createContract(
       byte[] contents,
-      Hbar maxTransactionFee,
+      @NonNull Hbar maxTransactionFee,
       int gas,
-      PrivateKey adminKey,
-      ContractParam<?>... constructorParams)
+      @NonNull PrivateKey adminKey,
+      @Nullable ContractParam<?>... constructorParams)
       throws HieroException;
 
   /**
@@ -337,11 +347,11 @@ public interface SmartContractClient {
    * @throws HieroException if the contract could not be created
    */
   @NonNull ContractId createContract(
-      Path pathToBin,
-      Hbar maxTransactionFee,
+      @NonNull Path pathToBin,
+      @NonNull Hbar maxTransactionFee,
       int gas,
-      PrivateKey adminKey,
-      ContractParam<?>... constructorParams)
+      @NonNull PrivateKey adminKey,
+      @Nullable ContractParam<?>... constructorParams)
       throws HieroException;
 
   /**
