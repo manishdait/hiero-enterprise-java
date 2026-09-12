@@ -70,9 +70,10 @@ public class HieroNetworkConfiguration {
     public Optional<String> grpcAddresses = Optional.empty();
 
     /**
-     * Optional base URL for the Java REST API (e.g. {@code http://localhost:8084} in Solo). Required
-     * for {@code /api/v1/network/*} on mirror-node 0.15x+, where those routes are served by REST-Java
-     * only while the Node REST API remains the primary host for most other {@code /api/v1} paths.
+     * Optional base URL for the Java REST API (e.g. {@code http://localhost:8084} in Solo).
+     * Required for {@code /api/v1/network/*} on mirror-node 0.15x+, where those routes are served
+     * by REST-Java only while the Node REST API remains the primary host for most other {@code
+     * /api/v1} paths.
      */
     @ConfigProperty(name = "hiero.network.mirror-node-java-rest")
     private Optional<String> mirrorNodeJavaRest;

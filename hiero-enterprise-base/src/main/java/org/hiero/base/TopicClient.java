@@ -444,7 +444,6 @@ public interface TopicClient {
     return subscribeTopic(TopicId.fromString(topicId), handler, startTime, endTime);
   }
 
-
   /**
    * Subscribe to a Topic
    *
